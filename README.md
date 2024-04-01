@@ -1,5 +1,5 @@
 # qbx_density
-Base scripts for the QBox Core Framework :building_construction:
+Population management for qbox.
 
 ## Features
 - Calm AI (adjusting npc/gang npc aggresiveness)
