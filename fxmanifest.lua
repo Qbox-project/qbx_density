@@ -1,13 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'Density management'
+name 'qbx_density'
+description 'Population management'
 repository 'https://github.com/Qbox-project/qbx_density'
-version '1.0'
+version '1.0.0'
 
-client_scripts {
-    'main.lua',
-}
+client_script 'main.lua'
 
 lua54 'yes'
 use_experimental_fxv2_oal 'yes'
