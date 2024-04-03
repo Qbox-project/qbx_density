@@ -14,37 +14,57 @@ SetRelationshipBetweenGroups(1, `MEDIC`, `PLAYER`)
 SetRelationshipBetweenGroups(1, `COP`, `PLAYER`)
 SetRelationshipBetweenGroups(1, `PRISONER`, `PLAYER`)
 
-local density = {
-    parked = 0.8,
-    vehicle = 0.8,
-    multiplier = 0.8,
-    peds = 0.8,
-    scenario = 0.8,
-}
+DecorRegister('ScriptedPed', 2)
+local densities = {}
+local density = 0.8
+local pedDensity = 1.0
+local isSpeeding = false
+local isDriver = false
+local disabledDensity = false
+local populationDensity = 0.8
 
-local function decorSet(type, value)
-    if type == 'parked' then
-        density.parked = value
-    elseif type == 'vehicle' then
-        density.vehicle = value
-    elseif type == 'multiplier' then
-        density.multiplier = value
-    elseif type == 'peds' then
-        density.peds = value
-    elseif type == 'scenario' then
-        density.scenario = value
-    end
+local function registerDensityReason(pReason, pPriority)
+    densities[pReason] = { reason = pReason, priority = pPriority, level = -1, active = false }
 end
 
-exports('DecorSet', decorSet)
+exports('registerDensityReason', registerDensityReason)
+
+local function changeDensity(pReason, pLevel)
+    if not densities[pReason] then return end
+
+    densities[pReason]['level'] = pLevel
+
+    local level = populationDensity
+    local priority
+
+    for i = 1, #densities do
+        local reason = densities[i]
+        if reason.level ~= -1 and (not priority or priority < reason.priority) then
+            priority = reason.priority
+            level = reason.level
+        end
+    end
+
+    lib.print.warn('density', level)
+
+    density = level + 0.0
+end
+
+exports('changeDensity', changeDensity)
 
 CreateThread(function()
     while true do
-        SetParkedVehicleDensityMultiplierThisFrame(density.parked)
-        SetVehicleDensityMultiplierThisFrame(density.vehicle)
-        SetRandomVehicleDensityMultiplierThisFrame(density.multiplier)
-        SetPedDensityMultiplierThisFrame(density.peds)
-        SetScenarioPedDensityMultiplierThisFrame(density.scenario, density.scenario) -- Walking NPC Density
+        local vehDensity = isSpeeding and (isDriver and 0.1 or 0.0) or density
+
+        if disabledDensity then
+            vehDensity = 1.0
+        end
+
+        SetParkedVehicleDensityMultiplierThisFrame(pedDensity)
+        SetVehicleDensityMultiplierThisFrame(vehDensity)
+        SetRandomVehicleDensityMultiplierThisFrame(vehDensity)
+        SetPedDensityMultiplierThisFrame(pedDensity)
+        SetScenarioPedDensityMultiplierThisFrame(pedDensity, pedDensity) -- Walking NPC Density
         Wait(0)
     end
 end)
