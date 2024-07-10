@@ -13,3 +13,7 @@ Population management for qbox.
 ```
 ensure qbx_density
 ```
+
+## Configuration
+- Adjust variables in `config/client.lua` for permanent changes
+- Utilize `exports.qbx_density:SetDensity(type, value)` to adjust at runtime
