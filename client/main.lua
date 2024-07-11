@@ -14,15 +14,15 @@ SetRelationshipBetweenGroups(1, `MEDIC`, `PLAYER`)
 SetRelationshipBetweenGroups(1, `COP`, `PLAYER`)
 SetRelationshipBetweenGroups(1, `PRISONER`, `PLAYER`)
 
-local density = lib.load('qbx_density.config')
+local density = lib.load('config.client')
 
 local function setDensity(type, value)
     if type == 'parked' then
         density.parked = value
     elseif type == 'vehicle' then
         density.vehicle = value
-    elseif type == 'multiplier' then
-        density.multiplier = value
+    elseif type == 'randomvehicles' then
+        density.randomvehicles = value
     elseif type == 'peds' then
         density.peds = value
     elseif type == 'scenario' then
@@ -30,15 +30,13 @@ local function setDensity(type, value)
     end
 end
 
----@deprecated use SetDensity instead
-exports('DecorSet', setDensity)
 exports('SetDensity', setDensity)
 
 CreateThread(function()
     while true do
         SetParkedVehicleDensityMultiplierThisFrame(density.parked)
         SetVehicleDensityMultiplierThisFrame(density.vehicle)
-        SetRandomVehicleDensityMultiplierThisFrame(density.multiplier)
+        SetRandomVehicleDensityMultiplierThisFrame(density.randomvehicles)
         SetPedDensityMultiplierThisFrame(density.peds)
         SetScenarioPedDensityMultiplierThisFrame(density.scenario, density.scenario) -- Walking NPC Density
         Wait(0)
